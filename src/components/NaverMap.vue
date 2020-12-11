@@ -1,6 +1,15 @@
 <template>
     <div id='wrap' class="section">
-        <div id="naverMap"> </div>
+        <el-row :gutter="20">
+            <el-col :span="12" >
+                <div id="naverMap" class="map"> </div>
+            </el-col>
+            <el-col :span="12">
+                <el-button class="bt" type="success">geo-query 실행</el-button>
+                <div class="grid-content bg-purple-light">
+                </div>
+            </el-col>
+        </el-row>
     </div>
 </template>
 
@@ -68,8 +77,33 @@ export default {
 
 <style scoped>
 #naverMap {
-    height: 100vh;
-    min-height: 100vh;
+    height: 70vh;
+    min-height: 600px;
     width: 100%;
+}
+
+.map {
+    /* padding: 10px; */
+    margin: 20px
+}
+
+.bt {
+    margin: 50px;
+    float: left;
+  font-size: 1.5em;
+}
+
+.grid-content {
+  min-height: 500px;
+  /* padding: 2em 1em 1em 1em; */
+  font-size: 1.5em;
+  margin: 20px;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+  text-align: left;
+  margin: 130px 80px 60px 50px;
+  min-height: 600px;
 }
 </style>
