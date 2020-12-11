@@ -5,7 +5,7 @@
                 <div id="naverMap" class="map"> </div>
             </el-col>
             <el-col :span="12">
-                <el-button class="bt" type="success">geo-query 실행</el-button>
+                <el-button class="bt" type="success" @click="geoQuery">geo-query 실행</el-button>
                 <div class="grid-content bg-purple-light">
                 </div>
             </el-col>
@@ -14,19 +14,44 @@
 </template>
 
 <script>
+import axios from "axios"
+
+var paths = [];
 export default {
     name: 'hello',
     data() {
         return {
-            // polyPaths: []
+            response: 'Response',
+            polyPaths: []
 
+        }
+    },
+    methods: {
+        geoQuery: function() {
+            // const poly = 
+            // console.log(paths.length);
+            // for (var i=0; i++; i<paths.length) {
+            //     console.log(paths[i][0]);
+            // }
+            const poly = paths[0][0] + " " + paths[0][1] + "," + paths[1][0] + " " + paths[1][1] + "," + paths[2][0] + " " + paths[2][1] + "," + paths[3][0] + " " + paths[3][1]
+            console.log(poly);
+            const headers = {
+                "X-M2M-RI": "12345",
+                "X-M2M-Origin": "SM",
+                "Accept": "application/json"
+            };
+            const url = "http://localhost:7599/wdc_base?gt=3&gf=1&ty=3&rcn=8&crd=" + poly;
+            axios.get(url, { headers }).then((response) => {
+                console.log(response.data);
+                this.response = response.data;
+            });
         }
     },
     mounted() {
         var map = null;
         initMap();
 
-        var paths = []
+        // var paths = []
 
         function initMap() {
             map = new naver.maps.Map(document.getElementById('naverMap'), {
@@ -66,8 +91,9 @@ export default {
                 // console.log(paths.length)
                 // console.log('lat: '+ point._lat)
 
-                paths.push([point._lat, point._lng])
+                paths.push([point._lng, point._lat])
                 console.log('path: '+paths);
+                // this.polyPaths.push(point._lat);
             });
 
         }
