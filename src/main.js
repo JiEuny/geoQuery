@@ -15,8 +15,8 @@ new Vue({
   template: '<App/>'
 })
 
-Vue.use(naver, {
-  clientID: 'fkvlootofp',
-  useGovAPI: false,
-  subModules:''
-})
+// Vue.use(naver, {
+//   clientID: 'fkvlootofp',
+//   useGovAPI: false,
+//   subModules:''
+// })

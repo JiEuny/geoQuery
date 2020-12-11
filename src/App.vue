@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <router-view/>
+    <NaverMap></NaverMap>
   </div>
 </template>
 
 <script>
+import NaverMap from './components/NaverMap.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    NaverMap
+  }
 }
 </script>
 
