@@ -122,15 +122,14 @@ export default {
 
 .grid-content {
   min-height: 500px;
-  /* padding: 2em 1em 1em 1em; */
+  padding: 1em;
   font-size: 1.5em;
-  margin: 20px;
+  text-align: left;
 }
 
 .bg-purple-light {
   background: #e5e9f2;
-  text-align: left;
-  margin: 130px 80px 60px 50px;
+  margin: 130px 80px 0px 50px;
   min-height: 600px;
 }
 </style>
