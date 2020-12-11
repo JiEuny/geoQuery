@@ -7,6 +7,7 @@
             <el-col :span="12">
                 <el-button class="bt" type="success" @click="geoQuery">geo-query 실행</el-button>
                 <div class="grid-content bg-purple-light">
+                    <pre>{{ JSON.stringify(response, null, '\t') }}</pre>
                 </div>
             </el-col>
         </el-row>
@@ -33,7 +34,7 @@ export default {
             // for (var i=0; i++; i<paths.length) {
             //     console.log(paths[i][0]);
             // }
-            const poly = paths[0][0] + " " + paths[0][1] + "," + paths[1][0] + " " + paths[1][1] + "," + paths[2][0] + " " + paths[2][1] + "," + paths[3][0] + " " + paths[3][1]
+            const poly = paths[0][0] + " " + paths[0][1] + "," + paths[1][0] + " " + paths[1][1] + "," + paths[2][0] + " " + paths[2][1] + "," + paths[3][0] + " " + paths[3][1] + "," + paths[0][0] + " " + paths[0][1]
             console.log(poly);
             const headers = {
                 "X-M2M-RI": "12345",
