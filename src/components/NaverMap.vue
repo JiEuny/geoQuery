@@ -5,10 +5,11 @@
         <div id="naverMap" class="map"></div>
       </el-col>
       <el-col :span="12">
-        <el-button class="bt" type="success" @click="geoQuery"
-          >geo-query 실행</el-button
-        >
-        <div class="grid-content bg-purple-light">
+        <el-button class="bt" type="success" @click="geoQuery">geo-query 실행</el-button>
+        <div class="name">Request URL</div>
+        <div class="request">{{url}}</div>
+        <div class="name2">Response Body</div>
+        <div v-dragscroll class="grid-content bg-purple-light">
           <pre>{{ JSON.stringify(response, null, "\t") }}</pre>
         </div>
       </el-col>
@@ -25,13 +26,44 @@ var map = null;
 var HOME_PATH = window.HOME_PATH || '.';
 var newPath = null;
 var contentString = null;
-var infowindows = [];
+// var infowindows = [];
+var lat, lng, cont = null;
+var markerList = [];
+var contList = [];
+var markers = [], infowindows = [];
+
+// function getClickHandler(seq) {
+//     return function(e) {
+//         var marker = this.markerList[seq],
+//             infoWindow = this.contList[seq];
+
+//         if (infoWindow.getMap()) {
+//             infoWindow.close();
+//         } else {
+//             infoWindow.open(map, marker);
+//         }
+//     }
+// }
+
+// function getClickHandler(seq) {
+//                 return function(e) {
+//                     var marker = markers[seq],
+//                         infoWindow = infoWindows[seq];
+
+//                     if (infoWindow.getMap()) {
+//                         infoWindow.close();
+//                     } else {
+//                         infoWindow.open(map, marker);
+//                     }
+//                 }
+//             }
 export default {
   name: "hello",
   data() {
     return {
       response: "Response",
       polyPaths: [],
+      url: ""
     };
   },
   methods: {
@@ -56,16 +88,15 @@ export default {
       axios.get(url, { headers }).then((response) => {
         // console.log(response.data);
         this.response = response.data;
+        this.url = url;
 
         for (const [key, value] of Object.entries(response.data)) {
           // console.log(key)
           for (const [key2, value2] of Object.entries(value)) {
-            // console.log(key2)
+            // console.log(value2)
             for (const body of value2) {
             //   console.log(body);
-              for (const [key3, value3] of Object.entries(body)) {
-                  
-                    map = new naver.maps.Map(document.getElementById("naverMap"), {
+                map = new naver.maps.Map(document.getElementById("naverMap"), {
                         center: new naver.maps.LatLng(37.41229359683477, 127.12875737226753),
                         zoom: 16,
                         zoomControl: true,
@@ -73,36 +104,108 @@ export default {
                         position: naver.maps.Position.RIGHT_TOP,
                         },
                     });;
+              for (const [key3, value3] of Object.entries(body)) {
+                  
+                    
                 // console.log(value3);
                 if (key3 == "loc") {
                     // console.log(value3.crd)
-                    this.newMark = [value3.crd[1], value3.crd[0]]
-                    console.log(this.newMark)
+                    // this.newMark = [value3.crd[1], value3.crd[0]]
+                    this.lat = value3.crd[1];
+                    this.lng = value3.crd[0];
+                    // console.log(this.lat, this.lng)
+                    // console.log(this.newMark)
                     // makeMarker(newMark)
-                    newPath = new naver.maps.LatLng(this.newMark[0], this.newMark[1])
+                    // newPath = new naver.maps.LatLng(this.newMark[0], this.newMark[1])
+                    
+                    // newPath = new naver.maps.LatLng(this.lat, this.lng)
+                    // var newM = new naver.maps.Marker({
+                    //         position: newPath,
+                    //         map: map,
+                    //         icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                    // })
+                    // markerList.push(newM);
                 } else if (key3 == "lbl") {
-                    this.contentString = value3[0]
-                    console.log("cont: "+this.contentString)
+                    // this.contentString = value3[0]
+                    // console.log("cont: "+this.contentString)
+                    this.cont = value3[0]
+                    contList.push(cont)
                 }
-                var newM = new naver.maps.Marker({
-                        position: newPath,
-                        map: map,
-                        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+              }
+                newMark.push([this.lat, this.lng, this.cont]);
+                
+
+
+            //   console.log(markerList)
+
+            //   console.log(newMark)
+
+            //   for(var marker in newMark) {
+            //     //   console.log("test: "+ marker)
+            //   }
+            }
+
+            // console.log(newMark[0][0])
+
+            for (var i = 0; i< newMark.length; i++) {
+                var eachMark = new naver.maps.Marker({
+                    position: new naver.maps.LatLng(newMark[i][0], newMark[i][1]),
+                    map: map,
+                    icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
                 })
                 var infowindow = new naver.maps.InfoWindow({
-                    content: this.contentString
+                    content: newMark[i][2]
                 })
-                // infowindow.open(map, newM)
-                // var infowindow = new naver.maps.InfoWindow();
-                naver.maps.Event.addListener(newM, "click", function(e) {
+                // naver.maps.Event.addListener(eachMark, 'click', getClickHandler(newMark[i][2]))
+                new naver.maps.Event.addListener(eachMark, "click", function(e) {
                     if (infowindow.getMap()) {
                         infowindow.close();
-                    } else {
-                        infowindow.open(map, newM);
+                    }else {
+                         infowindow.open(map, eachMark);
                     }
+                    console.log(infowindow)
                 })
-              }
+
+                markers.push(eachMark);
+                infowindows.push(infowindow);
+                // infowindow.open(map, eachMark)
+                
             }
+            // console.log(infowindows)
+
+            
+
+            // for (var i=0, ii=markers.length; i<ii; i++) {
+            //     naver.maps.Event.addListener(markers[i], 'click', function(e) {
+            //         // if (this.infowindows[i].getMap()) {
+            //             infowindows[i].open(map, markers[i]);
+            //         // }
+            //     });
+            // }
+            
+                // for ( var marker in newMark) {
+                //     console.log(marker)
+                // }
+            
+              
+                // newPath = new naver.maps.LatLng(this.lat, this.lng)
+                // var newM = new naver.maps.Marker({
+                //         position: newPath,
+                //         map: map,
+                //         icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                // })
+                // var infowindow = new naver.maps.InfoWindow({
+                //     content: this.cont
+                // })
+                // // infowindow.open(map, newM)
+                // // var infowindow = new naver.maps.InfoWindow();
+                // naver.maps.Event.addListener(newM, "click", function(e) {
+                //     if (infowindow.getMap()) {
+                //         infowindow.close();
+                //     } else {
+                //         infowindow.open(map, newM);
+                //     }
+                // })
           }
         }
       });
@@ -171,7 +274,7 @@ export default {
 
 <style scoped>
 #naverMap {
-  height: 70vh;
+  height: 80vh;
   min-height: 800px;
   width: 100%;
 }
@@ -181,9 +284,35 @@ export default {
 }
 
 .bt {
-  margin: 50px;
+  margin: 30px;
   float: left;
   font-size: 1.5em;
+}
+
+.request {
+  background: #e5e9f2;
+  text-align: left;
+  margin: 0px 80px 0px 50px;
+  font-size: 1.3em;
+  padding: 1em;
+  min-height: 50px;
+
+}
+
+.name {
+  font-size: 1.5em;
+  margin: 90px 0px 0px 30px;
+  text-align: left;
+  padding: 1em;
+    
+}
+
+.name2 {
+  font-size: 1.5em;
+  margin: 0px 0px 0px 30px;
+  text-align: left;
+  padding: 1em;
+    
 }
 
 .grid-content {
@@ -196,7 +325,7 @@ export default {
 
 .bg-purple-light {
   background: #e5e9f2;
-  margin: 130px 80px 0px 50px;
-  min-height: 600px;
+  margin: 0px 80px 0px 50px;
+  min-height: 700px;
 }
 </style>
